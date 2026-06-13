@@ -1,11 +1,10 @@
 import os
-import google.generativeai as genai
+from groq import Groq
 from dotenv import load_dotenv
 
 load_dotenv()
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-1.5-flash")
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 
 def generar_plan_alimentario(paciente, clasificacion, alimentos):
@@ -14,7 +13,7 @@ def generar_plan_alimentario(paciente, clasificacion, alimentos):
     prompt = f"""
     Eres un asistente nutricional especializado en nutrición infantil en zonas vulnerables de Colombia.
     
-    Genera un plan alimentario personalizado y detallado para el siguiente paciente:
+    Genera un plan alimentario personalizado para el siguiente paciente:
     
     - Nombre: {paciente.nombre_completo}
     - Edad: {paciente.edad} años
@@ -26,17 +25,21 @@ def generar_plan_alimentario(paciente, clasificacion, alimentos):
     - Alimentos PAE disponibles: {nombres_alimentos}
     
     El plan debe:
-    1. Ser práctico y usar solo los alimentos PAE disponibles
+    1. Usar solo los alimentos PAE disponibles
     2. Incluir recomendaciones para desayuno, almuerzo y cena
     3. Considerar las alergias del paciente
-    4. Ser comprensible para los padres o cuidadores
+    4. Ser comprensible para padres o cuidadores
     5. Incluir una meta nutricional para el próximo mes
     
     Responde en español, de forma clara y empática. Máximo 300 palabras.
     """
 
     try:
-        response = model.generate_content(prompt)
-        return response.text
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=500,
+        )
+        return response.choices[0].message.content
     except Exception as e:
-        return f"No se pudo generar el plan con IA: {str(e)}"
+        return f"Error IA: {type(e).__name__}: {str(e)}"

@@ -4,6 +4,7 @@ from apps.pacientes.models import Paciente
 from apps.recomendaciones.models import Alimento, Recomendacion
 from .models import Consulta
 from .inferencia import evaluar_reglas, calcular_imc
+from .groq_ia import generar_plan_alimentario
 
 
 def valorar_paciente(request, paciente_id):
@@ -35,16 +36,19 @@ def valorar_paciente(request, paciente_id):
             observaciones=regla.observacion
         )
 
-        # Alimentos PAE disponibles filtrando alergias del paciente
+        # Alimentos PAE filtrando alergias
         alergias = paciente.alergias.values_list('descripcion', flat=True)
-        alimentos = Alimento.objects.filter(disponible_pae=True).exclude(
-            nombre__in=alergias
-        )
+        alimentos = Alimento.objects.filter(disponible_pae=True).exclude(nombre__in=alergias)
+
+        # Generar plan con Gemini
+        plan_ia = generar_plan_alimentario(paciente, regla.clasificacion, alimentos)
+        print("GEMINI RESULTADO:", plan_ia)
 
         recomendacion = Recomendacion.objects.create(
             consulta=consulta,
             grupos_alimentarios=regla.clasificacion,
-            detalle=regla.observacion
+            detalle=regla.observacion,
+            detalle_ia=plan_ia
         )
         recomendacion.alimentos.set(alimentos)
 
