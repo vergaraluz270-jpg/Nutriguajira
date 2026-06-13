@@ -1,3 +1,22 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from apps.pacientes.models import Paciente
+from .models import Seguimiento
 
-# Create your views here.
+
+def seguimiento_paciente(request, paciente_id):
+    paciente = get_object_or_404(Paciente, id=paciente_id)
+    seguimientos = Seguimiento.objects.filter(paciente=paciente).order_by('fecha')
+    consultas = paciente.consultas.order_by('fecha')
+
+    # Datos para la gráfica
+    fechas = [str(c.fecha.date()) for c in consultas]
+    imcs = [float(c.imc_calculado) for c in consultas]
+
+    context = {
+        'paciente': paciente,
+        'seguimientos': seguimientos,
+        'consultas': consultas,
+        'fechas': fechas,
+        'imcs': imcs,
+    }
+    return render(request, 'seguimiento/seguimiento.html', context)
