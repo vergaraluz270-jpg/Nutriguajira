@@ -78,4 +78,4 @@ python manage.py runserver
 - Dewis Álvarez
 
 **Universidad de La Guajira — Programación Avanzada 2026-I**  
-**Docente: Eduardo Sierra**
+**Docente: Jenier Suarez**
