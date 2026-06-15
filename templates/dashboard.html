@@ -10,22 +10,29 @@
 
 <!-- Tarjetas de resumen -->
 <div class="row g-4 mb-4">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card text-center p-3">
             <div class="display-4 text-success fw-bold">{{ total_pacientes }}</div>
             <div class="text-muted mt-1"><i class="bi bi-people"></i> Pacientes registrados</div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card text-center p-3">
             <div class="display-4 text-success fw-bold">{{ total_consultas }}</div>
             <div class="text-muted mt-1"><i class="bi bi-clipboard2-pulse"></i> Valoraciones realizadas</div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card text-center p-3">
             <div class="display-4 text-success fw-bold">{{ total_recomendaciones }}</div>
             <div class="text-muted mt-1"><i class="bi bi-heart-pulse"></i> Recomendaciones generadas</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-3">
+            <div class="display-4 text-success fw-bold">{{ institucion_top.total|default:"0" }}</div>
+            <div class="text-muted mt-1"><i class="bi bi-building"></i> {{ institucion_top.institucion|default:"Sin datos" }}</div>
+            <small class="text-muted">Institución top</small>
         </div>
     </div>
 </div>
